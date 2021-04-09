@@ -1,0 +1,37 @@
+            Idle: if(!Strobe) begin
+                     NEXT_STATE = Idle;
+                     OutputLogic = 8'b10000000;
+                  end else if (Strobe && DRW) begin
+                     NEXT_STATE = Write;
+                     OutputLogic = 8'b10000000;
+                  end else if (Strobe && !DRW) begin
+                     NEXT_STATE = Read;
+                     OutputLogic = 8'b10000000;
+                  end
+            Read: if (!M && !V) begin
+                     NEXT_STATE = ReadMiss;
+                     OutputLogic = 8'b11000000;
+                  end else if (!M && V) begin
+                     NEXT_STATE = ReadMiss;
+                     OutputLogic = 8'b11000000;
+                  end else if (M && !V) begin
+                     NEXT_STATE = ReadMiss;
+                     OutputLogic = 8'b11000000;
+                  end else if (M && V) begin
+                     NEXT_STATE = Idle;
+                     OutputLogic = 8'b11000000;
+                  end
+            ReadMiss: begin
+                        NEXT_STATE = ReadMem;
+                        OutputLogic = 8'b10001000;
+                     end
+            ReadMem: if (CtrSig) begin
+                        NEXT_STATE = ReadData;
+                        OutputLogic = 8'b00000000;
+                     end else if (CtrSig) begin
+                        NEXT_STATE = ReadMem;
+                        OutputLogic = 8'b00000000;
+            ReadData: begin
+                        NEXT_STATE = Idle;
+                        OutputLogic = 8'b00110110;
+                     end
