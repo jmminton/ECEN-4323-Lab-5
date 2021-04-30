@@ -37,7 +37,7 @@ module CacheControl(input Strobe,
    //next state logic
    NextStateLogic next(.current(CURRENT_STATE),
                        .Strobe(Strobe),
-                       .RW(DRW),
+                       .DRW(DRW),
                        .M(M),
                        .V(V),
                        .CtrSig(CtrSig),
@@ -47,7 +47,7 @@ endmodule /* Control */
 
 module NextStateLogic(input  logic [3:0] current,
                       input  logic       Strobe,
-                      input  logic       RW,
+                      input  logic       DRW,
                       input  logic       M,
                       input  logic       V,
                       input  logic       CtrSig,
@@ -94,12 +94,15 @@ module NextStateLogic(input  logic [3:0] current,
                      next = ReadMem;
                      OutputLogic = 8'b10001000;
          end
-         ReadMem: if (CtrSig) begin
+         ReadMem: begin
+                  if (CtrSig) begin
                      next = ReadData;
                      OutputLogic = 8'b00000000;
                   end else if (CtrSig) begin
                      next = ReadMem;
                      OutputLogic = 8'b00000000;
+                     end
+         end
          ReadData: begin
                      next = Idle;
                      OutputLogic = 8'b00110110;
@@ -136,12 +139,9 @@ module NextStateLogic(input  logic [3:0] current,
             OutputLogic = 8'bx;
          end
       endcase
+  end
 
 
-
-
-);
-
-enmodule /*NextStateLogic*/
+endmodule /*NextStateLogic*/
 
 
